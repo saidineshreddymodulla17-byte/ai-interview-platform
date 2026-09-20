@@ -1,0 +1,216 @@
+import { useState } from "react"
+import { Eye, EyeOff, Mail, Lock, User } from "lucide-react"
+import { Link, useNavigate } from "react-router-dom"
+
+import AuthLayout from "../../components/auth/AuthLayout"
+
+function Register() {
+  const navigate = useNavigate()
+
+  const [name, setName] = useState("")
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
+  const [showPassword, setShowPassword] = useState(false)
+  const [error, setError] = useState("")
+  const [loading, setLoading] = useState(false)
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+
+    setError("")
+
+    if (!name || !email || !password || !confirmPassword) {
+      setError("Please fill in all fields")
+      return
+    }
+
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters")
+      return
+    }
+
+    if (password !== confirmPassword) {
+      setError("Passwords do not match")
+      return
+    }
+
+    try {
+      setLoading(true)
+
+      const response = await fetch(
+        "http://localhost:5000/api/auth/register",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name,
+            email,
+            password,
+          }),
+        }
+      )
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(
+          data.message || "Registration failed"
+        )
+      }
+
+      navigate("/login")
+    } catch (error) {
+      setError(error.message || "Something went wrong")
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <AuthLayout>
+      <div>
+        <h2 className="text-2xl font-bold text-white">
+          Create an account
+        </h2>
+
+        <p className="mt-2 text-sm text-slate-400">
+          Start practicing and improve your interview skills.
+        </p>
+      </div>
+
+      {error && (
+        <div className="mt-5 rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-400">
+          {error}
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit} className="mt-8 space-y-5">
+
+        {/* Name */}
+        <div>
+          <label className="text-sm font-medium text-slate-300">
+            Full Name
+          </label>
+
+          <div className="relative mt-2">
+            <User
+              size={18}
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"
+            />
+
+            <input
+              type="text"
+              placeholder="Enter your name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="w-full rounded-xl border border-slate-700 bg-slate-950 py-3 pl-10 pr-4 text-sm text-white outline-none transition focus:border-indigo-500"
+            />
+          </div>
+        </div>
+
+        {/* Email */}
+        <div>
+          <label className="text-sm font-medium text-slate-300">
+            Email
+          </label>
+
+          <div className="relative mt-2">
+            <Mail
+              size={18}
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"
+            />
+
+            <input
+              type="email"
+              placeholder="you@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full rounded-xl border border-slate-700 bg-slate-950 py-3 pl-10 pr-4 text-sm text-white outline-none transition focus:border-indigo-500"
+            />
+          </div>
+        </div>
+
+        {/* Password */}
+        <div>
+          <label className="text-sm font-medium text-slate-300">
+            Password
+          </label>
+
+          <div className="relative mt-2">
+            <Lock
+              size={18}
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"
+            />
+
+            <input
+              type={showPassword ? "text" : "password"}
+              placeholder="Create a password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full rounded-xl border border-slate-700 bg-slate-950 py-3 pl-10 pr-12 text-sm text-white outline-none transition focus:border-indigo-500"
+            />
+
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white"
+            >
+              {showPassword ? (
+                <EyeOff size={18} />
+              ) : (
+                <Eye size={18} />
+              )}
+            </button>
+          </div>
+        </div>
+
+        {/* Confirm Password */}
+        <div>
+          <label className="text-sm font-medium text-slate-300">
+            Confirm Password
+          </label>
+
+          <div className="relative mt-2">
+            <Lock
+              size={18}
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"
+            />
+
+            <input
+              type={showPassword ? "text" : "password"}
+              placeholder="Confirm your password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              className="w-full rounded-xl border border-slate-700 bg-slate-950 py-3 pl-10 pr-4 text-sm text-white outline-none transition focus:border-indigo-500"
+            />
+          </div>
+        </div>
+
+        {/* Submit */}
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full rounded-xl bg-indigo-600 py-3 font-semibold text-white transition hover:bg-indigo-500 disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          {loading ? "Creating Account..." : "Create Account"}
+        </button>
+
+      </form>
+
+      <p className="mt-6 text-center text-sm text-slate-400">
+        Already have an account?{" "}
+        <Link
+          to="/login"
+          className="font-medium text-indigo-400 hover:text-indigo-300"
+        >
+          Sign in
+        </Link>
+      </p>
+    </AuthLayout>
+  )
+}
+
+export default Register
