@@ -20,7 +20,7 @@ function InterviewRoom() {
         const token = localStorage.getItem("token")
 
         const response = await fetch(
-          `http://localhost:5000/api/interviews/${id}`,
+          `https://ai-interview-platform-yaf9.onrender.com/api/interviews/${id}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -70,7 +70,7 @@ function InterviewRoom() {
 
       // Save answer
       const response = await fetch(
-        `http://localhost:5000/api/interviews/${id}/answer`,
+        `https://ai-interview-platform-yaf9.onrender.com/api/interviews/${id}/answer`,
         {
           method: "POST",
           headers: {
@@ -101,7 +101,7 @@ function InterviewRoom() {
 
       // Evaluate interview after final answer
       const evaluateResponse = await fetch(
-        `http://localhost:5000/api/interviews/${id}/evaluate`,
+        `https://ai-interview-platform-yaf9.onrender.com/api/interviews/${id}/evaluate`,
         {
           method: "POST",
           headers: {

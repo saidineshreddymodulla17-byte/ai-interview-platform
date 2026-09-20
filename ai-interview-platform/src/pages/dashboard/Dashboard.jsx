@@ -26,7 +26,7 @@ function Dashboard() {
         const token = localStorage.getItem("token")
 
         const response = await fetch(
-          "http://localhost:5000/api/interviews",
+          "https://ai-interview-platform-yaf9.onrender.com/api/interviews",
           {
             headers: {
               Authorization: `Bearer ${token}`,
